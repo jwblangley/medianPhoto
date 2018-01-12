@@ -1,6 +1,8 @@
 package jwblangley.medianPhoto;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class Run {
 
@@ -43,8 +47,23 @@ public class Run {
 
     saveImage(result);
     System.out.println("Done!");
+    displayMessage("Done!");
 
   }
+
+  public static void displayMessage(String message) {
+    JFrame mFrame = new JFrame("Photo Median");
+    mFrame.getContentPane().setPreferredSize(new Dimension(400, 200));
+    mFrame.getContentPane().setLayout(new BorderLayout());
+    JLabel mLabel = new JLabel(message);
+    mLabel.setHorizontalAlignment(JLabel.CENTER);
+    mFrame.getContentPane().add(mLabel, BorderLayout.CENTER);
+    mFrame.pack();
+    mFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    mFrame.setLocationRelativeTo(null);
+    mFrame.setVisible(true);
+  }
+
 
   private static void saveImage(BufferedImage img) {
     try {
