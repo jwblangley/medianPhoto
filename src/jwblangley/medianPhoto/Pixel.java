@@ -11,9 +11,7 @@ public class Pixel implements Comparable {
   }
 
   public int getIntensity() {
-    int min = Integer.min(c.getRed(), Integer.min(c.getGreen(), c.getBlue()));
-    int max = Integer.max(c.getRed(), Integer.max(c.getGreen(), c.getBlue()));
-    return (min + max) / 2;
+    return (c.getRed() + c.getGreen() + c.getBlue()) / 3;
   }
 
   public Color getColor() {

@@ -1,26 +1,26 @@
 package jwblangley.medianPhoto;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
 public class Run {
 
-  public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
+  private static File workingDirectory;
 
   public static void main(String[] args) {
 
     JFileChooser fc = new JFileChooser();
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-    File workingDirectory;
 
     if (fc.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) {
-      //return;
-      workingDirectory = new File("testPhotos");
+      return;
     } else {
       workingDirectory = fc.getSelectedFile();
     }
@@ -28,9 +28,12 @@ public class Run {
     for (File f : workingDirectory.listFiles()) {
       try {
         BufferedImage img = ImageIO.read(f);
-        validImages.add(img);
+        if (img != null){
+          //is a valid image
+          validImages.add(img);
+        }
       } catch (IOException e) {
-        // Not a valid image
+        // File could not be opened
         continue;
       }
     }
@@ -45,7 +48,7 @@ public class Run {
 
   private static void saveImage(BufferedImage img) {
     try {
-      ImageIO.write(img, "jpg", unusedFile("out", "jpg"));
+      ImageIO.write(img, "jpg", unusedFile(workingDirectory.getAbsolutePath()+"/out", "jpg"));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -75,6 +78,34 @@ public class Run {
     Arrays.sort(pxs);
     return pxs[pxs.length / 2];
   }
+
+  private static Pixel rangePixel(Pixel[] pxs){
+    Integer[] intesities = new Integer[pxs.length];
+    for (int i=0; i<pxs.length; i++){
+      intesities[i] = pxs[i].getIntensity();
+    }
+    int range = (Collections.max(Arrays.asList(intesities)) - Collections.min(Arrays.asList(intesities)));
+    return new Pixel((new Color(range, range, range)).getRGB());
+  }
+
+
+  private static Pixel meanPixel(Pixel[] pxs) {
+    Arrays.sort(pxs);
+    int redTotal = 0;
+    int greenTotal = 0;
+    int blueTotal = 0;
+    for (int i = 0; i < pxs.length; i++) {
+      redTotal += pxs[i].getColor().getRed();
+      greenTotal += pxs[i].getColor().getGreen();
+      blueTotal += pxs[i].getColor().getBlue();
+    }
+    int redVal = redTotal / pxs.length;
+    int blueVal = blueTotal / pxs.length;
+    int greenVal = greenTotal / pxs.length;
+
+    return new Pixel((new Color(redVal, greenVal, blueVal)).getRGB());
+  }
+
 
   private static BufferedImage medianImage(BufferedImage[] imgs) {
     assert allSameDimensions(imgs) : "Images are not all the same dimension";
