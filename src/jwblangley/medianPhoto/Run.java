@@ -39,6 +39,7 @@ public class Run {
     BufferedImage result = medianImage(images);
 
     saveImage(result);
+    System.out.println("Done!");
 
   }
 
